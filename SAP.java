@@ -144,8 +144,14 @@ public class SAP {
     }
 
     private void updateAncestor(int v, int w) {
-        ancestor = v;
-        minDistance = toDistTo[ancestor] + fromDistTo[ancestor];
+        if (id[v] == w) {
+            ancestor = v;
+            minDistance = toDistTo[v];
+        } else if (id[w] == v) {
+            ancestor = w;
+            minDistance = fromDistTo[w];
+        }
+
     }
 
     // a common ancestor that participates in the shortest ancestral path; -1 if no
@@ -228,14 +234,15 @@ public class SAP {
                                 fromQueue.dequeue();
                             break;
                         }
-                        if (id[j] == id[t]) {
+                        if (id[j] == id[t] && currentAncestor != j
+                                && ((toDistTo[j] + fromDistTo[j]) < currentDistance)) {
                             currentAncestor = j;
                             currentDistance = toDistTo[j] + fromDistTo[j];
                         } else {
                             id[j] = id[v];
-                        edgeTo[j] = v;
-                        fromQueue.enqueue(j);
-                        }    
+                            edgeTo[j] = v;
+                            fromQueue.enqueue(j);
+                        }
                     }
                 }
             }
@@ -255,9 +262,11 @@ public class SAP {
                                 fromQueue.dequeue();
                             break;
                         }
-                        if (id[k] == id[f]) {
+                        if (id[k] == id[f] && currentAncestor != k
+                                && ((toDistTo[k] + fromDistTo[k]) < currentDistance)) {
                             currentAncestor = k;
                             currentDistance = toDistTo[k] + fromDistTo[k];
+
                         } else {
                             id[k] = id[w];
                             edgeTo[k] = w;
