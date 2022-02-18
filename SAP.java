@@ -34,10 +34,10 @@ public class SAP {
          * edgeTo = new int[n];
          * for (int i = 0; i < n; i++) {
          * edgeTo[i] = -1;
-         * }
-         * fromDistTo = new int[n];
-         * toDistTo = new int[n];
-         */
+         * }*/
+         fromDistTo = new int[n];
+         toDistTo = new int[n];
+         
     }
 
     // length of the shortest ancestral path between v and w; -1 if no such path
@@ -63,7 +63,8 @@ public class SAP {
             ancestor = -1;
             return minDistance = -1;
         }
-        if (id[v] == w || id[w] == v) {
+
+        if (!(v == 0 || w == 0) && (id[v] == w || id[w] == v)) {
             updateAncestor(v, w);
         } else
             lockStepBFS(from, to);
@@ -136,7 +137,7 @@ public class SAP {
             minDistance = -1;
             return ancestor = -1;
         }
-        if (id[v] == w || id[w] == v) {
+        if (!(v == 0 || w == 0) && (id[v] == w || id[w] == v)) {
             updateAncestor(v, w);
         } else
             lockStepBFS(from, to);
@@ -203,8 +204,8 @@ public class SAP {
         for (int i = 0; i < n; i++) {
             edgeTo[i] = -1;
         }
-        fromDistTo = new int[n];
-        toDistTo = new int[n];
+        // fromDistTo = new int[n];
+        // toDistTo = new int[n];
         Queue<Integer> fromQueue = new Queue<>();
         Queue<Integer> toQueue = new Queue<>();
         fromQueue.enqueue(f);
