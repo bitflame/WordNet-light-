@@ -34,10 +34,11 @@ public class SAP {
          * edgeTo = new int[n];
          * for (int i = 0; i < n; i++) {
          * edgeTo[i] = -1;
-         * }*/
-         fromDistTo = new int[n];
-         toDistTo = new int[n];
-         
+         * }
+         */
+        fromDistTo = new int[n];
+        toDistTo = new int[n];
+
     }
 
     // length of the shortest ancestral path between v and w; -1 if no such path
