@@ -1,7 +1,6 @@
 import edu.princeton.cs.algs4.Queue;
 import edu.princeton.cs.algs4.Digraph;
 import edu.princeton.cs.algs4.In;
-import edu.princeton.cs.algs4.Stack;
 
 import java.util.Iterator;
 
@@ -35,9 +34,10 @@ public class SAP {
          * for (int i = 0; i < n; i++) {
          * edgeTo[i] = -1;
          * }
+         * 
+         * fromDistTo = new int[n];
+         * toDistTo = new int[n];
          */
-        fromDistTo = new int[n];
-        toDistTo = new int[n];
 
     }
 
@@ -68,6 +68,8 @@ public class SAP {
         if (!(v == 0 || w == 0) && (id[v] == w || id[w] == v)) {
             updateAncestor(v, w);
         } else
+            // I can save minDistance in a hash table key: destination, value: minimum
+            // distance
             lockStepBFS(from, to);
 
         return minDistance;
@@ -138,9 +140,11 @@ public class SAP {
             minDistance = -1;
             return ancestor = -1;
         }
+
         if (!(v == 0 || w == 0) && (id[v] == w || id[w] == v)) {
             updateAncestor(v, w);
         } else
+
             lockStepBFS(from, to);
         return ancestor;
     }
@@ -202,6 +206,8 @@ public class SAP {
         fromMarked = new boolean[n];
         toMarked = new boolean[n];
         edgeTo = new int[n];
+        fromDistTo = new int[n];
+        toDistTo = new int[n];
         for (int i = 0; i < n; i++) {
             edgeTo[i] = -1;
         }
@@ -219,7 +225,6 @@ public class SAP {
         id[t] = t;
         int currentDistance = INFINITY;
         int currentAncestor = -1;
-        int tempDist;
         while (!(fromQueue.isEmpty() && toQueue.isEmpty())) {
             if (!fromQueue.isEmpty()) {
                 int v = fromQueue.dequeue();
@@ -228,7 +233,11 @@ public class SAP {
                 for (int j : digraphDFCopy.adj(v)) {
                     if (!fromMarked[j]) {
                         fromMarked[j] = true;
-                        fromDistTo[j] = fromDistTo[v] + 1;
+                        // fromDistTo[j] = fromDistTo[v] + 1;
+                        if (edgeTo[j] > 0)
+                            fromDistTo[j] = Math.min(toDistTo[edgeTo[j]] + 1, fromDistTo[v] + 1);
+                        else
+                            fromDistTo[j] = fromDistTo[v] + 1;
                         if (fromDistTo[j] > currentDistance) {
                             while (!toQueue.isEmpty())
                                 toQueue.dequeue();
@@ -256,7 +265,11 @@ public class SAP {
                 for (int k : digraphDFCopy.adj(w)) {
                     if (!toMarked[k]) {
                         toMarked[k] = true;
-                        toDistTo[k] = toDistTo[w] + 1;
+                        // toDistTo[k] = toDistTo[w] + 1;
+                        if (edgeTo[k] > 0)
+                            toDistTo[k] = Math.min(fromDistTo[edgeTo[k] + 1], toDistTo[w] + 1);
+                        else
+                            toDistTo[k] = toDistTo[w] + 1;
                         if (toDistTo[k] > currentDistance) {
                             while (!toQueue.isEmpty())
                                 toQueue.dequeue();
