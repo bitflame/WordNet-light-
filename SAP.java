@@ -189,12 +189,16 @@ public class SAP {
         return ancestor;
     }
 
-    private int countHops() {
+    // v is the ancestor and w is source or destination
+    private int countHops(int v, int w) {
+        if (v == w || v == id[v])
+            return 0;
         int hops = 0;
-        for (int i = from; i < to; i++) {
-            if (id[i] != i)
-                hops++;
+        while (id[v] != w) {
+            v = id[v];
+            hops++;
         }
+        hops++;
         return hops;
     }
 
@@ -216,9 +220,7 @@ public class SAP {
         marked[f] = true;
         marked[t] = true;
         fromDistTo[f] = 0;
-        id[f] = f;
         toDistTo[t] = 0;
-        id[t] = t;
         int currentDistance = INFINITY;
         int currentAncestor = -1;
         while (!(fromQueue.isEmpty() && toQueue.isEmpty())) {
@@ -230,13 +232,13 @@ public class SAP {
                     if (!marked[j]) {
                         marked[j] = true;
                         fromDistTo[j] = fromDistTo[v] + 1;
-                        id[j] = id[v];
+                        id[j] = v;
                         edgeTo[j] = v;
                         fromQueue.enqueue(j);
                     }
                     if (id[j] == id[t]) {
                         currentAncestor = j;
-                        currentDistance = countHops();
+                        currentDistance = countHops(j, t) + countHops(j, f);
                     }
                 }
             }
@@ -249,13 +251,13 @@ public class SAP {
                     if (!marked[k]) {
                         marked[k] = true;
                         toDistTo[k] = toDistTo[w] + 1;
-                        id[k] = id[w];
+                        id[k] = w;
                         edgeTo[k] = w;
                         toQueue.enqueue(k);
                     }
                     if (id[k] == id[f]) {
                         currentAncestor = k;
-                        currentDistance = countHops();
+                        currentDistance = countHops(k, t) + countHops(k, f);
                     }
                 }
             }
@@ -267,7 +269,7 @@ public class SAP {
             ancestor = -1;
             // return minDistance;
         } else if (currentDistance == 0) {
-            currentDistance = 1;
+            minDistance = 1;
         } else {
             minDistance = currentDistance;
             ancestor = currentAncestor;
