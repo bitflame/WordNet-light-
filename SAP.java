@@ -232,7 +232,8 @@ public class SAP {
                     }
                 }
             }
-
+/* if the id[] has a node entery same as f or t, then I can skip lock-step and just traverse edgeTo to 
+that node */
             if (!toQueue.isEmpty()) {
                 int w = toQueue.dequeue();
                 if (print)
