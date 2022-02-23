@@ -52,14 +52,7 @@ public class SAP {
             ancestor = -1;
             return minDistance = -1;
         }
-
-        if (!(v == 0 || w == 0) && (id[v] == w || id[w] == v)) {
-            updateAncestor(v, w);
-        } else
-            // I can save minDistance in a hash table key: destination, value: minimum
-            // distance
-            lockStepBFS(from, to);
-
+        lockStepBFS(from, to);
         return minDistance;
     }
 
@@ -128,12 +121,7 @@ public class SAP {
             minDistance = -1;
             return ancestor = -1;
         }
-
-        if (!(v == 0 || w == 0) && (id[v] == w || id[w] == v)) {
-            updateAncestor(v, w);
-        } else
-
-            lockStepBFS(from, to);
+        lockStepBFS(from, to);
         return ancestor;
     }
 
@@ -210,7 +198,7 @@ public class SAP {
         toDistTo = new int[n];
         for (int i = 0; i < n; i++) {
             id[i] = i;
-            edgeTo[i]=i;
+            edgeTo[i] = i;
         }
         // fromDistTo = new int[n];
         // toDistTo = new int[n];
@@ -239,8 +227,8 @@ public class SAP {
                     }
                     if (id[j] == id[t]) {
                         currentAncestor = j;
-                        // if j==t just add 0, if not 
-                        currentDistance = countHops(j, t) + countHops(v, f) +1;
+                        // if j==t just add 0, if not
+                        currentDistance = countHops(j, t) + countHops(v, f) + 1;
                     }
                 }
             }
@@ -253,13 +241,13 @@ public class SAP {
                     if (!marked[k]) {
                         marked[k] = true;
                         toDistTo[k] = toDistTo[w] + 1;
-                        id[k] = id [w];
+                        id[k] = id[w];
                         edgeTo[k] = w;
                         toQueue.enqueue(k);
                     }
                     if (id[k] == id[f]) {
                         currentAncestor = k;
-                        currentDistance = countHops(w, t) + countHops(k, f)+1;
+                        currentDistance = countHops(w, t) + countHops(k, f) + 1;
                     }
                 }
             }
