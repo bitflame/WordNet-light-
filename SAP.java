@@ -189,15 +189,12 @@ public class SAP {
         return ancestor;
     }
 
-    private int followEdgeTo(int v, int w) {
-        if (v == w)
-            return 0;
+    private int countHops() {
         int hops = 0;
-        while (edgeTo[v] != v) {
-            v = edgeTo[v];
-            hops = hops + 1;
+        for (int i = from; i < to; i++) {
+            if (id[i] != i)
+                hops++;
         }
-        hops = hops + 1;
         return hops;
     }
 
@@ -208,7 +205,7 @@ public class SAP {
         fromDistTo = new int[n];
         toDistTo = new int[n];
         for (int i = 0; i < n; i++) {
-            edgeTo[i] = i;
+            id[i] = i;
         }
         // fromDistTo = new int[n];
         // toDistTo = new int[n];
@@ -217,6 +214,7 @@ public class SAP {
         fromQueue.enqueue(f);
         toQueue.enqueue(t);
         marked[f] = true;
+        marked[t] = true;
         fromDistTo[f] = 0;
         id[f] = f;
         toDistTo[t] = 0;
@@ -238,7 +236,7 @@ public class SAP {
                     }
                     if (id[j] == id[t]) {
                         currentAncestor = j;
-                        currentDistance = toDistTo[j] + fromDistTo[j];
+                        currentDistance = countHops();
                     }
                 }
             }
@@ -257,8 +255,7 @@ public class SAP {
                     }
                     if (id[k] == id[f]) {
                         currentAncestor = k;
-                        // currentDistance = toDistTo[k] + fromDistTo[k];
-                        currentDistance = followEdgeTo(k, f) + followEdgeTo(k, t);
+                        currentDistance = countHops();
                     }
                 }
             }
@@ -269,6 +266,8 @@ public class SAP {
             minDistance = -1;
             ancestor = -1;
             // return minDistance;
+        } else if (currentDistance == 0) {
+            currentDistance = 1;
         } else {
             minDistance = currentDistance;
             ancestor = currentAncestor;
