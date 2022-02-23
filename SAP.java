@@ -11,8 +11,8 @@ public class SAP {
     private int from;
     private int to;
     private final int n;
-    private boolean[] fromMarked;
-    private boolean[] toMarked;
+    private boolean[] marked;
+
     private int[] edgeTo;
     private int[] fromDistTo;
     private int[] toDistTo;
@@ -27,18 +27,6 @@ public class SAP {
         digraphDFCopy = new Digraph(digraph);
         n = digraphDFCopy.V();
         id = new int[n];
-        /*
-         * fromMarked = new boolean[n];
-         * toMarked = new boolean[n];
-         * edgeTo = new int[n];
-         * for (int i = 0; i < n; i++) {
-         * edgeTo[i] = -1;
-         * }
-         * 
-         * fromDistTo = new int[n];
-         * toDistTo = new int[n];
-         */
-
     }
 
     // length of the shortest ancestral path between v and w; -1 if no such path
@@ -201,15 +189,26 @@ public class SAP {
         return ancestor;
     }
 
+    private int followEdgeTo(int v, int w) {
+        if (v == w)
+            return 0;
+        int hops = 0;
+        while (edgeTo[v] != v) {
+            v = edgeTo[v];
+            hops = hops + 1;
+        }
+        hops = hops + 1;
+        return hops;
+    }
+
     private void lockStepBFS(int f, int t) {
         /* todo - you can use digraph indegree to set edgeTo f and t maybe */
-        fromMarked = new boolean[n];
-        toMarked = new boolean[n];
+        marked = new boolean[n];
         edgeTo = new int[n];
         fromDistTo = new int[n];
         toDistTo = new int[n];
         for (int i = 0; i < n; i++) {
-            edgeTo[i] = -1;
+            edgeTo[i] = i;
         }
         // fromDistTo = new int[n];
         // toDistTo = new int[n];
@@ -217,10 +216,9 @@ public class SAP {
         Queue<Integer> toQueue = new Queue<>();
         fromQueue.enqueue(f);
         toQueue.enqueue(t);
-        fromMarked[f] = true;
+        marked[f] = true;
         fromDistTo[f] = 0;
         id[f] = f;
-        toMarked[t] = true;
         toDistTo[t] = 0;
         id[t] = t;
         int currentDistance = INFINITY;
@@ -231,29 +229,16 @@ public class SAP {
                 if (print)
                     System.out.printf("took %d from fromQueue \n", v);
                 for (int j : digraphDFCopy.adj(v)) {
-                    if (!fromMarked[j]) {
-                        fromMarked[j] = true;
-                        // fromDistTo[j] = fromDistTo[v] + 1;
-                        if (edgeTo[j] > 0)
-                            fromDistTo[j] = Math.min(toDistTo[edgeTo[j]] + 1, fromDistTo[v] + 1);
-                        else
-                            fromDistTo[j] = fromDistTo[v] + 1;
-                        if (fromDistTo[j] > currentDistance) {
-                            while (!toQueue.isEmpty())
-                                toQueue.dequeue();
-                            while (!fromQueue.isEmpty())
-                                fromQueue.dequeue();
-                            break;
-                        }
-                        if (id[j] == id[t] && currentAncestor != j
-                                && ((toDistTo[j] + fromDistTo[j]) < currentDistance)) {
-                            currentAncestor = j;
-                            currentDistance = toDistTo[j] + fromDistTo[j];
-                        } else {
-                            id[j] = id[v];
-                            edgeTo[j] = v;
-                            fromQueue.enqueue(j);
-                        }
+                    if (!marked[j]) {
+                        marked[j] = true;
+                        fromDistTo[j] = fromDistTo[v] + 1;
+                        id[j] = id[v];
+                        edgeTo[j] = v;
+                        fromQueue.enqueue(j);
+                    }
+                    if (id[j] == id[t]) {
+                        currentAncestor = j;
+                        currentDistance = toDistTo[j] + fromDistTo[j];
                     }
                 }
             }
@@ -263,30 +248,17 @@ public class SAP {
                 if (print)
                     System.out.printf("took %d from toQueue \n", w);
                 for (int k : digraphDFCopy.adj(w)) {
-                    if (!toMarked[k]) {
-                        toMarked[k] = true;
-                        // toDistTo[k] = toDistTo[w] + 1;
-                        if (edgeTo[k] > 0)
-                            toDistTo[k] = Math.min(fromDistTo[edgeTo[k] + 1], toDistTo[w] + 1);
-                        else
-                            toDistTo[k] = toDistTo[w] + 1;
-                        if (toDistTo[k] > currentDistance) {
-                            while (!toQueue.isEmpty())
-                                toQueue.dequeue();
-                            while (!fromQueue.isEmpty())
-                                fromQueue.dequeue();
-                            break;
-                        }
-                        if (id[k] == id[f] && currentAncestor != k
-                                && ((toDistTo[k] + fromDistTo[k]) < currentDistance)) {
-                            currentAncestor = k;
-                            currentDistance = toDistTo[k] + fromDistTo[k];
-
-                        } else {
-                            id[k] = id[w];
-                            edgeTo[k] = w;
-                            toQueue.enqueue(k);
-                        }
+                    if (!marked[k]) {
+                        marked[k] = true;
+                        toDistTo[k] = toDistTo[w] + 1;
+                        id[k] = id[w];
+                        edgeTo[k] = w;
+                        toQueue.enqueue(k);
+                    }
+                    if (id[k] == id[f]) {
+                        currentAncestor = k;
+                        // currentDistance = toDistTo[k] + fromDistTo[k];
+                        currentDistance = followEdgeTo(k, f) + followEdgeTo(k, t);
                     }
                 }
             }
