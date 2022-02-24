@@ -68,6 +68,19 @@ public class AutoGraderTests {
         ancestor = sap.ancestor(3, 3);
         if (ancestor != 3)
             System.out.printf("The value of ancestor between 3 and 3 should be 3, but it is: %d\n", ancestor);
+        // if you 12,7 then 3,10 should be done also
+        shortestDistance = sap.length(12, 7);
+        if (shortestDistance != 5)
+            System.out.printf("The distance between 12 and 7 should be 5, but it is: %d\n", shortestDistance);
+        ancestor = sap.ancestor(12, 7);
+        if (ancestor!=1)
+        System.out.printf("The value of ancestor between 12 and 7 should be 1, but it is: %d\n", ancestor);
+        shortestDistance = sap.length(3, 10);
+        if (shortestDistance != 3)
+            System.out.printf("The distance between 3 and 10 should be 3, but it is: %d\n", shortestDistance);
+        ancestor = sap.ancestor(3, 10);
+        if (ancestor != 1)
+            System.out.printf("The value of ancestor between 3 and 10 should be 1, but it is: %d\n", ancestor);
         shortestDistance = sap.length(3, 8);
         if (shortestDistance != 1)
             System.out.printf("The value of length between 3 and 8 should be 1, but it is: %d\n", shortestDistance);
