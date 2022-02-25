@@ -232,7 +232,7 @@ public class SAP {
                         } else {
                             currentAncestor = j;
                             currentDistance = temp;
-                            while (j != f) {
+                            while (j != t) {
                                 id[j] = id[v];
                                 j = edgeTo[j];
                             }
@@ -260,7 +260,7 @@ public class SAP {
                         else {
                             currentAncestor = k;
                             currentDistance = temp;
-                            while (k != t) {
+                            while (k != f) {
                                 id[k] = id[w];
                                 k = edgeTo[k];
                             }
