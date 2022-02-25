@@ -183,7 +183,8 @@ public class SAP {
             return 0;
         int hops = 0;
         while (edgeTo[v] != w) {
-            if (v==edgeTo[v]) break;
+            if (v == edgeTo[v])
+                break;
             v = edgeTo[v];
             hops++;
         }
@@ -192,7 +193,6 @@ public class SAP {
     }
 
     private void lockStepBFS(int f, int t) {
-        /* todo - you can use digraph indegree to set edgeTo f and t maybe */
         marked = new boolean[n];
         edgeTo = new int[n];
         fromDistTo = new int[n];
@@ -201,8 +201,6 @@ public class SAP {
             id[i] = i;
             edgeTo[i] = i;
         }
-        // fromDistTo = new int[n];
-        // toDistTo = new int[n];
         Queue<Integer> fromQueue = new Queue<>();
         Queue<Integer> toQueue = new Queue<>();
         fromQueue.enqueue(f);
@@ -213,6 +211,7 @@ public class SAP {
         toDistTo[t] = 0;
         int currentDistance = INFINITY;
         int currentAncestor = -1;
+        int temp = 0;
         while (!(fromQueue.isEmpty() && toQueue.isEmpty())) {
             if (!fromQueue.isEmpty()) {
                 int v = fromQueue.dequeue();
@@ -227,14 +226,16 @@ public class SAP {
                         fromQueue.enqueue(j);
                     }
                     if (id[j] == id[t]) {
-                        currentAncestor = j;
-                        // if j==t just add 0, if not
-                        currentDistance = countHops(j, t) + countHops(v, f) + 1;
-                        /* Once you calculated minimum distance update all the remaining ids. The loop
-                        below goes in infinit loop in some cases. I think when there is a cycle  */
-                        while (j != id[j]) {
-                            id[j] = id[v];
-                            j = edgeTo[j];
+                        temp = countHops(j, t) + countHops(v, f) + 1;
+                        if (temp > currentDistance) {
+                            break;
+                        } else {
+                            currentAncestor = j;
+                            currentDistance = countHops(j, t) + countHops(v, f) + 1;
+                            while (j != id[j]) {
+                                id[j] = id[v];
+                                j = edgeTo[j];
+                            }
                         }
                     }
                 }
@@ -249,22 +250,22 @@ public class SAP {
                         marked[k] = true;
                         toDistTo[k] = toDistTo[w] + 1;
                         id[k] = id[w];
-                        /*
-                         * If both from and to in the id array have an entry different from their
-                         * original, then I can skip lock-step
-                         * and the ancestor is the last node in the edgeTo[] with a different node id
-                         */
                         edgeTo[k] = w;
                         toQueue.enqueue(k);
                     }
                     if (id[k] == id[f]) {
-                        currentAncestor = k;
-                        // infinit loop occurs inside countHops() which I may not need since I already keep track of distance 
-                        currentDistance = countHops(w, t) + countHops(k, f) + 1;
-                        while (k!=id[k]){
-                            id[k]=id[w];
-                            k = edgeTo[k];
+                        temp = countHops(w, t) + countHops(k, f) + 1;
+                        if (temp > currentDistance)
+                            break;
+                        else {
+                            currentAncestor = k;
+                            currentDistance = temp;
+                            while (k != id[k]) {
+                                id[k] = id[w];
+                                k = edgeTo[k];
+                            }
                         }
+
                     }
                 }
             }
@@ -282,7 +283,6 @@ public class SAP {
         // return currentDistance;
     }
 
-    // testEdgeTo(ancestor, x) and preAncestor'sNode like v, and w to the other end
     private boolean testEdgeTo(int ancestor, int destination) {
         // System.out.printf("inside testEdge for " + from + " and " + to);
         if (ancestor == destination)
@@ -296,7 +296,6 @@ public class SAP {
             // System.out.print(" " + i);
         }
         // if (i != -1) System.out.print(" " + i);
-
         return (i == destination);
     }
 
