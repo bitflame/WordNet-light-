@@ -236,6 +236,7 @@ public class SAP {
                                 id[j] = id[v];
                                 j = edgeTo[j];
                             }
+                            id[j]=id[v];
                         }
                     }
                 }
@@ -264,6 +265,7 @@ public class SAP {
                                 id[k] = id[w];
                                 k = edgeTo[k];
                             }
+                            id[k]=id[w];
                         }
                     }
                 }
