@@ -183,6 +183,7 @@ public class SAP {
             return 0;
         int hops = 0;
         while (edgeTo[v] != w) {
+            if (v==edgeTo[v]) break;
             v = edgeTo[v];
             hops++;
         }
@@ -229,6 +230,12 @@ public class SAP {
                         currentAncestor = j;
                         // if j==t just add 0, if not
                         currentDistance = countHops(j, t) + countHops(v, f) + 1;
+                        /* Once you calculated minimum distance update all the remaining ids. The loop
+                        below goes in infinit loop in some cases. I think when there is a cycle  */
+                        while (j != id[j]) {
+                            id[j] = id[v];
+                            j = edgeTo[j];
+                        }
                     }
                 }
             }
@@ -246,13 +253,18 @@ public class SAP {
                          * If both from and to in the id array have an entry different from their
                          * original, then I can skip lock-step
                          * and the ancestor is the last node in the edgeTo[] with a different node id
-                         */ 
+                         */
                         edgeTo[k] = w;
                         toQueue.enqueue(k);
                     }
                     if (id[k] == id[f]) {
                         currentAncestor = k;
+                        // infinit loop occurs inside countHops() which I may not need since I already keep track of distance 
                         currentDistance = countHops(w, t) + countHops(k, f) + 1;
+                        while (k!=id[k]){
+                            id[k]=id[w];
+                            k = edgeTo[k];
+                        }
                     }
                 }
             }
