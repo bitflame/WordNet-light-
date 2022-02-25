@@ -515,8 +515,8 @@ public class AutoGraderTests {
 
     public static void main(String[] args) {
         AutoGraderTests autoGraderTests = new AutoGraderTests();
-        autoGraderTests.troubleShooting();
-        autoGraderTests.testDigraphWordNet();
+        // autoGraderTests.troubleShooting();
+        // autoGraderTests.testDigraphWordNet();
         autoGraderTests.testDigraph1();
         autoGraderTests.testDigraph2();
         autoGraderTests.testDigraph3();

@@ -227,14 +227,16 @@ public class SAP {
                     }
                     if (id[j] == id[t]) {
                         temp = countHops(j, t) + countHops(v, f) + 1;
-                        if (temp > currentDistance) {
+                        if (temp >= currentDistance) {
                             break;
                         } else {
                             currentAncestor = j;
-                            currentDistance = countHops(j, t) + countHops(v, f) + 1;
+                            currentDistance = temp;
+                            id[j] = id[v];
                             while (j != id[j]) {
-                                id[j] = id[v];
                                 j = edgeTo[j];
+                                if (j==id[j]) break;
+                                id[j] = id[v];
                             }
                         }
                     }
@@ -255,14 +257,16 @@ public class SAP {
                     }
                     if (id[k] == id[f]) {
                         temp = countHops(w, t) + countHops(k, f) + 1;
-                        if (temp > currentDistance)
+                        if (temp >= currentDistance)
                             break;
                         else {
                             currentAncestor = k;
                             currentDistance = temp;
+                            id[k] = id[w];
                             while (k != id[k]) {
-                                id[k] = id[w];
                                 k = edgeTo[k];
+                                if (k==id[k]) break;
+                                id[k] = id[w];
                             }
                         }
 
