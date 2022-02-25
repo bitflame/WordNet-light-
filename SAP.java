@@ -232,11 +232,11 @@ public class SAP {
                         } else {
                             currentAncestor = j;
                             currentDistance = temp;
-                            while (j != t) {
+                            while (j != t && j != f) {
                                 id[j] = id[v];
                                 j = edgeTo[j];
                             }
-                            id[j]=id[v];
+                            id[j] = id[v];
                         }
                     }
                 }
@@ -261,11 +261,11 @@ public class SAP {
                         else {
                             currentAncestor = k;
                             currentDistance = temp;
-                            while (k != f) {
+                            while (k != f && k != t) {
                                 id[k] = id[w];
                                 k = edgeTo[k];
                             }
-                            id[k]=id[w];
+                            id[k] = id[w];
                         }
                     }
                 }
