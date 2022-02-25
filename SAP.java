@@ -232,8 +232,7 @@ public class SAP {
                     }
                 }
             }
-/* if the id[] has a node entery same as f or t, then I can skip lock-step and just traverse edgeTo to 
-that node */
+
             if (!toQueue.isEmpty()) {
                 int w = toQueue.dequeue();
                 if (print)
@@ -243,6 +242,11 @@ that node */
                         marked[k] = true;
                         toDistTo[k] = toDistTo[w] + 1;
                         id[k] = id[w];
+                        /*
+                         * If both from and to in the id array have an entry different from their
+                         * original, then I can skip lock-step
+                         * and the ancestor is the last node in the edgeTo[] with a different node id
+                         */ 
                         edgeTo[k] = w;
                         toQueue.enqueue(k);
                     }
