@@ -125,17 +125,6 @@ public class SAP {
         return ancestor;
     }
 
-    private void updateAncestor(int v, int w) {
-        if (id[v] == w) {
-            ancestor = v;
-            minDistance = toDistTo[v];
-        } else if (id[w] == v) {
-            ancestor = w;
-            minDistance = fromDistTo[w];
-        }
-
-    }
-
     // a common ancestor that participates in the shortest ancestral path; -1 if no
     // such path
     public int ancestor(Iterable<Integer> v, Iterable<Integer> w) {
