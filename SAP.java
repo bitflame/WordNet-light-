@@ -57,9 +57,10 @@ public class SAP {
             ancestor = -1;
             return minDistance = -1;
         }
-        hops=0;
+        hops = 0;
         int vId = find(v);
         int hops1 = hops;
+        hops = 0;
         int wId = find(w);
         int hops2 = hops;
         if (vId == wId) {
@@ -136,9 +137,10 @@ public class SAP {
             minDistance = -1;
             return ancestor = -1;
         }
-        hops=0;
+        hops = 0;
         int vId = find(v);
         int hops1 = hops;
+        hops = 0;
         int wId = find(w);
         int hops2 = hops;
         if (vId == wId) {
@@ -216,10 +218,10 @@ public class SAP {
 
     private void lockStepBFS(int f, int t) {
         marked = new boolean[n];
-        
+
         fromDistTo = new int[n];
         toDistTo = new int[n];
-        
+
         Queue<Integer> fromQueue = new Queue<>();
         Queue<Integer> toQueue = new Queue<>();
         fromQueue.enqueue(f);
@@ -249,9 +251,12 @@ public class SAP {
                         if (temp >= currentDistance) {
                             break;
                         } else {
-                            currentAncestor = j;
-                            currentDistance = temp;
+                            // currentAncestor = j;
+                            ancestor = j;
+                            // currentDistance = temp;
+                            minDistance = temp;
                             id[v] = id[j];
+                            return;
                         }
                     }
                 }
@@ -274,9 +279,12 @@ public class SAP {
                         if (temp >= currentDistance)
                             break;
                         else {
-                            currentAncestor = k;
-                            currentDistance = temp;
+                            // currentAncestor = k;
+                            ancestor = k;
+                            // currentDistance = temp;
+                            minDistance = temp;
                             id[w] = id[k];
+                            return;
                         }
                     }
                 }
