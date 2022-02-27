@@ -27,6 +27,11 @@ public class SAP {
         digraphDFCopy = new Digraph(digraph);
         n = digraphDFCopy.V();
         id = new int[n];
+        edgeTo = new int[n];
+        for (int i = 0; i < n; i++) {
+            id[i] = i;
+            edgeTo[i] = i;
+        }
     }
 
     // length of the shortest ancestral path between v and w; -1 if no such path
@@ -52,6 +57,7 @@ public class SAP {
             ancestor = -1;
             return minDistance = -1;
         }
+        hops=0;
         int vId = find(v);
         int hops1 = hops;
         int wId = find(w);
@@ -130,6 +136,7 @@ public class SAP {
             minDistance = -1;
             return ancestor = -1;
         }
+        hops=0;
         int vId = find(v);
         int hops1 = hops;
         int wId = find(w);
@@ -185,7 +192,6 @@ public class SAP {
     }
 
     private int find(int x) {
-        hops=0;
         while (x != id[x]) {
             x = id[x];
             hops++;
@@ -210,13 +216,10 @@ public class SAP {
 
     private void lockStepBFS(int f, int t) {
         marked = new boolean[n];
-        edgeTo = new int[n];
+        
         fromDistTo = new int[n];
         toDistTo = new int[n];
-        for (int i = 0; i < n; i++) {
-            id[i] = i;
-            edgeTo[i] = i;
-        }
+        
         Queue<Integer> fromQueue = new Queue<>();
         Queue<Integer> toQueue = new Queue<>();
         fromQueue.enqueue(f);
