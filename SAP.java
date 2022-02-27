@@ -12,7 +12,7 @@ public class SAP {
     private int to;
     private final int n;
     private boolean[] marked;
-
+    private int hops;
     private int[] edgeTo;
     private int[] fromDistTo;
     private int[] toDistTo;
@@ -52,7 +52,16 @@ public class SAP {
             ancestor = -1;
             return minDistance = -1;
         }
-        lockStepBFS(from, to);
+        int vId = find(v);
+        int hops1 = hops;
+        int wId = find(w);
+        int hops2 = hops;
+        if (vId == wId) {
+            ancestor = vId;
+            minDistance = hops1 + hops2;
+        } else {
+            lockStepBFS(from, to);
+        }
         return minDistance;
     }
 
@@ -121,7 +130,16 @@ public class SAP {
             minDistance = -1;
             return ancestor = -1;
         }
-        lockStepBFS(from, to);
+        int vId = find(v);
+        int hops1 = hops;
+        int wId = find(w);
+        int hops2 = hops;
+        if (vId == wId) {
+            ancestor = vId;
+            minDistance = hops1 + hops2;
+        } else {
+            lockStepBFS(from, to);
+        }
         return ancestor;
     }
 
@@ -164,6 +182,15 @@ public class SAP {
         ancestor = currentAncestor;
         minDistance = prevLen;
         return ancestor;
+    }
+
+    private int find(int x) {
+        hops=0;
+        while (x != id[x]) {
+            x = id[x];
+            hops++;
+        }
+        return x;
     }
 
     // v is the ancestor and w is source or destination
@@ -210,22 +237,18 @@ public class SAP {
                     if (!marked[j]) {
                         marked[j] = true;
                         fromDistTo[j] = fromDistTo[v] + 1;
-                        id[j] = id[v];
+                        // id[j] = id[v];
+                        id[v] = id[j];
                         edgeTo[j] = v;
                         fromQueue.enqueue(j);
-                    }
-                    if (id[j] == id[t]) {
+                    } else {
                         temp = countHops(j, t) + countHops(v, f) + 1;
                         if (temp >= currentDistance) {
                             break;
                         } else {
                             currentAncestor = j;
                             currentDistance = temp;
-                            // while (j != t && j != f) {
-                            //     id[j] = id[v];
-                            //     j = edgeTo[j];
-                            // }
-                            // id[j] = id[v];
+                            id[v] = id[j];
                         }
                     }
                 }
@@ -239,22 +262,18 @@ public class SAP {
                     if (!marked[k]) {
                         marked[k] = true;
                         toDistTo[k] = toDistTo[w] + 1;
-                        id[k] = id[w];
+                        // id[k] = id[w];
+                        id[w] = id[k];
                         edgeTo[k] = w;
                         toQueue.enqueue(k);
-                    }
-                    if (id[k] == id[f]) {
+                    } else {
                         temp = countHops(w, t) + countHops(k, f) + 1;
                         if (temp >= currentDistance)
                             break;
                         else {
                             currentAncestor = k;
                             currentDistance = temp;
-                            // while (k != f && k != t) {
-                            //     id[k] = id[w];
-                            //     k = edgeTo[k];
-                            // }
-                            // id[k] = id[w];
+                            id[w] = id[k];
                         }
                     }
                 }
@@ -266,6 +285,8 @@ public class SAP {
             minDistance = -1;
             ancestor = -1;
             // return minDistance;
+        } else if (currentAncestor == -1) {
+            return;
         } else {
             minDistance = currentDistance;
             ancestor = currentAncestor;
