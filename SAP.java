@@ -57,18 +57,21 @@ public class SAP {
             ancestor = -1;
             return minDistance = -1;
         }
-        hops = 0;
-        int vId = find(v);
-        int hops1 = hops;
-        hops = 0;
-        int wId = find(w);
-        int hops2 = hops;
-        if (vId == wId) {
-            ancestor = vId;
-            minDistance = hops1 + hops2;
-        } else {
+        int vid = find(v, w);
+        int vhops = hops;
+        int wid = find(w, v);
+        int whops = hops;
+        if (vid == wid) {
+            minDistance = vhops + whops;
+            ancestor = vid;
+        } else if (vid == w) {
+            ancestor = w;
+            minDistance = vhops;
+        } else if (wid == v) {
+            ancestor = v;
+            minDistance = whops;
+        } else
             lockStepBFS(from, to);
-        }
         return minDistance;
     }
 
@@ -137,18 +140,21 @@ public class SAP {
             minDistance = -1;
             return ancestor = -1;
         }
-        hops = 0;
-        int vId = find(v);
-        int hops1 = hops;
-        hops = 0;
-        int wId = find(w);
-        int hops2 = hops;
-        if (vId == wId) {
-            ancestor = vId;
-            minDistance = hops1 + hops2;
-        } else {
+        int vid = find(v, w);
+        int vhops = hops;
+        int wid = find(w, v);
+        int whops = hops;
+        if (vid == wid) {
+            minDistance = vhops + whops;
+            ancestor = vid;
+        } else if (vid == w) {
+            ancestor = w;
+            minDistance = vhops;
+        } else if (wid == v) {
+            ancestor = v;
+            minDistance = whops;
+        } else
             lockStepBFS(from, to);
-        }
         return ancestor;
     }
 
@@ -193,10 +199,13 @@ public class SAP {
         return ancestor;
     }
 
-    private int find(int x) {
+    private int find(int x, int y) {
+        hops = 0;
         while (x != id[x]) {
             x = id[x];
             hops++;
+            if (x == y)
+                return x;
         }
         return x;
     }
@@ -242,8 +251,8 @@ public class SAP {
                     if (!marked[j]) {
                         marked[j] = true;
                         fromDistTo[j] = fromDistTo[v] + 1;
-                        // id[j] = id[v];
-                        id[v] = id[j];
+                        // id[v] = id[j];
+                        id[v] = j;
                         edgeTo[j] = v;
                         fromQueue.enqueue(j);
                     } else {
@@ -255,7 +264,7 @@ public class SAP {
                             ancestor = j;
                             // currentDistance = temp;
                             minDistance = temp;
-                            id[v] = id[j];
+                            id[v] = j;
                             return;
                         }
                     }
@@ -270,8 +279,8 @@ public class SAP {
                     if (!marked[k]) {
                         marked[k] = true;
                         toDistTo[k] = toDistTo[w] + 1;
-                        // id[k] = id[w];
-                        id[w] = id[k];
+                        // id[w] = id[k];
+                        id[w] = k;
                         edgeTo[k] = w;
                         toQueue.enqueue(k);
                     } else {
@@ -283,7 +292,7 @@ public class SAP {
                             ancestor = k;
                             // currentDistance = temp;
                             minDistance = temp;
-                            id[w] = id[k];
+                            id[w] = k;
                             return;
                         }
                     }
