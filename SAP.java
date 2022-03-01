@@ -258,20 +258,18 @@ public class SAP {
                         fromQueue.enqueue(j);
                     } else {
                         temp = countHops(j, t) + countHops(v, f) + 1;
-                        if (temp >= currentDistance) {
-                            return;
-                        } else {
+                        // if currentDistance is infiniti or temp is smaller use temp
+                        // otherwise retrun
+                        if (currentDistance == INFINITY || temp < currentDistance) {
                             currentAncestor = j;
-                            // ancestor = j;
                             currentDistance = temp;
-                            // minDistance = temp;
                             id[v] = j;
-                            //return;
+                        } else {
+                            return;
                         }
                     }
                 }
             }
-
             if (!toQueue.isEmpty()) {
                 int w = toQueue.dequeue();
                 if (print)
@@ -286,15 +284,16 @@ public class SAP {
                         toQueue.enqueue(k);
                     } else {
                         temp = countHops(w, t) + countHops(k, f) + 1;
-                        if (temp >= currentDistance)
-                            return;
-                        else {
+                        if (currentDistance==INFINITY || temp<currentDistance){
                             currentAncestor = k;
                             // ancestor = k;
                             currentDistance = temp;
                             // minDistance = temp;
                             id[w] = k;
-                            //return;
+                            // return;
+                        }
+                        else {
+                            return;
                         }
                     }
                 }
