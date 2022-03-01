@@ -26,5 +26,26 @@ public class Test {
     public int count() {
         return count;
     }
+
+    public boolean matches(String s1, String s2) {
+        int count = 0;
+        char[] firstStringArray = s1.toCharArray();
+        char[] secondStringArray = s2.toCharArray();
+        while (count < Math.min(s1.length(), s2.length())) {
+            if (firstStringArray[count] != secondStringArray[count])
+                return false;
+        }
+        return true;
+    }
+
     // 1.5.23 Doubling test
+    public static void main(String[] args) {
+        String first = "bb";
+        String second = "bb";
+        System.err.println(first.compareTo(second));
+        int i = 0;
+        for (; i < second.length(); ++i) {
+            System.out.println("i: " + i);
+        }
+    }
 }
