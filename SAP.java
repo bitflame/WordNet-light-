@@ -242,6 +242,7 @@ public class SAP {
         int currentDistance = INFINITY;
         int currentAncestor = -1;
         int temp = 0;
+
         while (!(fromQueue.isEmpty() && toQueue.isEmpty())) {
             if (!fromQueue.isEmpty()) {
                 int v = fromQueue.dequeue();
@@ -258,14 +259,14 @@ public class SAP {
                     } else {
                         temp = countHops(j, t) + countHops(v, f) + 1;
                         if (temp >= currentDistance) {
-                            break;
-                        } else {
-                            // currentAncestor = j;
-                            ancestor = j;
-                            // currentDistance = temp;
-                            minDistance = temp;
-                            id[v] = j;
                             return;
+                        } else {
+                            currentAncestor = j;
+                            // ancestor = j;
+                            currentDistance = temp;
+                            // minDistance = temp;
+                            id[v] = j;
+                            //return;
                         }
                     }
                 }
@@ -286,14 +287,14 @@ public class SAP {
                     } else {
                         temp = countHops(w, t) + countHops(k, f) + 1;
                         if (temp >= currentDistance)
-                            break;
-                        else {
-                            // currentAncestor = k;
-                            ancestor = k;
-                            // currentDistance = temp;
-                            minDistance = temp;
-                            id[w] = k;
                             return;
+                        else {
+                            currentAncestor = k;
+                            // ancestor = k;
+                            currentDistance = temp;
+                            // minDistance = temp;
+                            id[w] = k;
+                            //return;
                         }
                     }
                 }
