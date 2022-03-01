@@ -14,8 +14,7 @@ public class SAP {
     private boolean[] marked;
     private int hops;
     private int[] edgeTo;
-    private int[] fromDistTo;
-    private int[] toDistTo;
+    private int[] DistTo;
     private final int[] id;
     private static final int INFINITY = Integer.MAX_VALUE;
     private final boolean print = false;
@@ -57,19 +56,9 @@ public class SAP {
             ancestor = -1;
             return minDistance = -1;
         }
-        int vid = find(v, w);
-        int vhops = hops;
-        int wid = find(w, v);
-        int whops = hops;
-        if (vid == wid) {
-            minDistance = vhops + whops;
-            ancestor = vid;
-        } else if (vid == w) {
-            ancestor = w;
-            minDistance = vhops;
-        } else if (wid == v) {
-            ancestor = v;
-            minDistance = whops;
+        if (id[v] == id[w]) {
+            ancestor = find(v, w);
+            minDistance = hops;
         } else
             lockStepBFS(from, to);
         return minDistance;
@@ -140,19 +129,9 @@ public class SAP {
             minDistance = -1;
             return ancestor = -1;
         }
-        int vid = find(v, w);
-        int vhops = hops;
-        int wid = find(w, v);
-        int whops = hops;
-        if (vid == wid) {
-            minDistance = vhops + whops;
-            ancestor = vid;
-        } else if (vid == w) {
-            ancestor = w;
-            minDistance = vhops;
-        } else if (wid == v) {
-            ancestor = v;
-            minDistance = whops;
+        if (id[v] == id[w]) {
+            ancestor = find(v, w);
+            minDistance = hops;
         } else
             lockStepBFS(from, to);
         return ancestor;
@@ -201,8 +180,8 @@ public class SAP {
 
     private int find(int x, int y) {
         hops = 0;
-        while (x != id[x]) {
-            x = id[x];
+        while (x != edgeTo[x]) {
+            x = edgeTo[x];
             hops++;
             if (x == y)
                 return x;
@@ -210,35 +189,25 @@ public class SAP {
         return x;
     }
 
-    // v is the ancestor and w is source or destination
-    private int countHops(int v, int w) {
-        if (v == w || v == edgeTo[v])
-            return 0;
-        int hops = 0;
-        while (edgeTo[v] != w) {
-            if (v == edgeTo[v])
-                break;
-            v = edgeTo[v];
-            hops++;
+    private void updateDistance(int newNode, int previousNode) {
+        while (DistTo[newNode] + 1 < DistTo[previousNode]) {
+            DistTo[previousNode] = DistTo[newNode] + 1;
+            previousNode = edgeTo[previousNode];
         }
-        hops++;
-        return hops;
     }
 
     private void lockStepBFS(int f, int t) {
         marked = new boolean[n];
-
-        fromDistTo = new int[n];
-        toDistTo = new int[n];
-
+        DistTo = new int[n];
+        DistTo = new int[n];
         Queue<Integer> fromQueue = new Queue<>();
         Queue<Integer> toQueue = new Queue<>();
         fromQueue.enqueue(f);
         toQueue.enqueue(t);
         marked[f] = true;
         marked[t] = true;
-        fromDistTo[f] = 0;
-        toDistTo[t] = 0;
+        DistTo[f] = 0;
+        DistTo[t] = 0;
         int currentDistance = INFINITY;
         int currentAncestor = -1;
         int temp = 0;
@@ -251,19 +220,23 @@ public class SAP {
                 for (int j : digraphDFCopy.adj(v)) {
                     if (!marked[j]) {
                         marked[j] = true;
-                        fromDistTo[j] = fromDistTo[v] + 1;
-                        // id[v] = id[j];
-                        id[v] = j;
+                        DistTo[j] = DistTo[v] + 1;
+                        id[j] = id[v];
                         edgeTo[j] = v;
                         fromQueue.enqueue(j);
                     } else {
-                        temp = countHops(j, t) + countHops(v, f) + 1;
-                        // if currentDistance is infiniti or temp is smaller use temp
-                        // otherwise retrun
+                        // if id[j]==id[v] I encountered a loop and have to update all previous
+                        // distances
+                        if (id[j] == id[v]) {
+                            // do not change distaqnce to j and use it to update distance to all the
+                            // previous nodes
+                            updateDistance(j, v);
+                        }
+                        // if DistTo[j] is larger, change v's id, otherwise change
+                        temp = DistTo[j] + DistTo[v] + 1;
                         if (currentDistance == INFINITY || temp < currentDistance) {
                             currentAncestor = j;
                             currentDistance = temp;
-                            id[v] = j;
                         } else {
                             return;
                         }
@@ -277,22 +250,20 @@ public class SAP {
                 for (int k : digraphDFCopy.adj(w)) {
                     if (!marked[k]) {
                         marked[k] = true;
-                        toDistTo[k] = toDistTo[w] + 1;
-                        // id[w] = id[k];
-                        id[w] = k;
+                        DistTo[k] = DistTo[w] + 1;
+                        id[k] = id[w];
                         edgeTo[k] = w;
                         toQueue.enqueue(k);
                     } else {
-                        temp = countHops(w, t) + countHops(k, f) + 1;
-                        if (currentDistance==INFINITY || temp<currentDistance){
-                            currentAncestor = k;
-                            // ancestor = k;
-                            currentDistance = temp;
-                            // minDistance = temp;
-                            id[w] = k;
-                            // return;
+                        if (id[k] == id[w]) {
+                            updateDistance(k, w);
                         }
-                        else {
+                        temp = DistTo[k] + DistTo[w] + 1;
+                        if (currentDistance == INFINITY || temp < currentDistance) {
+                            currentAncestor = k;
+                            currentDistance = temp;
+
+                        } else {
                             return;
                         }
                     }
@@ -310,6 +281,7 @@ public class SAP {
         } else {
             minDistance = currentDistance;
             ancestor = currentAncestor;
+            // Once I have an ancestor I can update the id of its edgeTos to its id. I think
         }
         // return currentDistance;
     }
