@@ -1,6 +1,8 @@
 {
     "java.project.referencedLibraries": [
         "lib/**/*.jar",
-        "/home/shahinansari/IdeaProjects/algs4.jar"
+        "/home/shahinansari/IdeaProjects/algs4.jar",
+        "/run/media/saamankarimi/D888-7299/IdeaProjects/GraphsII/lib/algs4.jar",
+        "/run/media/saamankarimi/D888-7299/IdeaProjects/algs4.jar"
     ]
 }
