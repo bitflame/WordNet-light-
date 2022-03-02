@@ -1,8 +1,14 @@
 import edu.princeton.cs.algs4.Queue;
+import edu.princeton.cs.algs4.Cycle;
 import edu.princeton.cs.algs4.Digraph;
 import edu.princeton.cs.algs4.In;
 
-import java.util.Iterator;/** Todo: Nodes with the same ids in a circle should be treated differently for minimum length calculation and ancestor */
+import java.util.Iterator;
+
+/**
+ * Todo: Nodes with the same ids in a circle should be treated differently for
+ * minimum length calculation and ancestor
+ */
 
 public class SAP {
     private final Digraph digraphDFCopy;
@@ -59,18 +65,14 @@ public class SAP {
             ancestor = -1;
             return minDistance = -1;
         }
-        if (id[v] == id[w]) {
+        if (id[v] == id[w] && !hasCircle) {
             if (find(v, w) == w) {
                 ancestor = v;
-                find(w, v);
                 minDistance = hops;
-                minDistance = Math.max(hops, minDistance);
-            } else if (find(w, v) == v) {
+            } else if (find(w, v) == v && !hasCircle) {
                 minDistance = hops;
                 ancestor = w;
-            } else {
-                lockStepBFS(from, to);
-            }
+            } else lockStepBFS(v,w);
         } else
             lockStepBFS(from, to);
         return minDistance;
@@ -142,17 +144,13 @@ public class SAP {
             return ancestor = -1;
         }
         if (id[v] == id[w]) {
-            if (find(v, w) == w) {
+            if (find(v, w) == w && !hasCircle) {
                 ancestor = v;
-                find(w, v);
                 minDistance = hops;
-                minDistance = Math.max(hops, minDistance);
-            } else if (find(w, v) == v) {
+            } else if (find(w, v) == v && !hasCircle) {
                 minDistance = hops;
                 ancestor = w;
-            } else {
-                lockStepBFS(from, to);
-            }
+            } else lockStepBFS(v, w);
         } else
             lockStepBFS(from, to);
         return ancestor;
@@ -230,8 +228,8 @@ public class SAP {
         int currentDistance = INFINITY;
         int currentAncestor = -1;
         int temp = 0;
-        int v = -1;
-        int w = -1;
+        int v = f;
+        int w = t;
         while (!(fromQueue.isEmpty() && toQueue.isEmpty())) {
             if (!fromQueue.isEmpty()) {
                 v = fromQueue.dequeue();
