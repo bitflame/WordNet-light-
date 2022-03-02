@@ -1,5 +1,5 @@
 import edu.princeton.cs.algs4.Queue;
-import edu.princeton.cs.algs4.Cycle;
+
 import edu.princeton.cs.algs4.Digraph;
 import edu.princeton.cs.algs4.In;
 
@@ -36,10 +36,6 @@ public class SAP {
         edgeTo = new int[n];
         DistTo = new int[n];
         DistTo = new int[n];
-        for (int i = 0; i < n; i++) {
-            id[i] = i;
-            edgeTo[i] = i;
-        }
     }
 
     // length of the shortest ancestral path between v and w; -1 if no such path
@@ -72,7 +68,8 @@ public class SAP {
             } else if (find(w, v) == v && !hasCircle) {
                 minDistance = hops;
                 ancestor = w;
-            } else lockStepBFS(v,w);
+            } else
+                lockStepBFS(v, w);
         } else
             lockStepBFS(from, to);
         return minDistance;
@@ -150,7 +147,8 @@ public class SAP {
             } else if (find(w, v) == v && !hasCircle) {
                 minDistance = hops;
                 ancestor = w;
-            } else lockStepBFS(v, w);
+            } else
+                lockStepBFS(v, w);
         } else
             lockStepBFS(from, to);
         return ancestor;
@@ -228,11 +226,13 @@ public class SAP {
         int currentDistance = INFINITY;
         int currentAncestor = -1;
         int temp = 0;
-        int v = f;
-        int w = t;
+        for (int i = 0; i < n; i++) {
+            id[i] = i;
+            edgeTo[i] = i;
+        }
         while (!(fromQueue.isEmpty() && toQueue.isEmpty())) {
             if (!fromQueue.isEmpty()) {
-                v = fromQueue.dequeue();
+                int v = fromQueue.dequeue();
                 if (print)
                     System.out.printf("took %d from fromQueue \n", v);
                 for (int j : digraphDFCopy.adj(v)) {
@@ -243,31 +243,29 @@ public class SAP {
                         edgeTo[j] = v;
                         fromQueue.enqueue(j);
                     } else {
-                        // if id[j]==id[v] I encountered a loop and have to update all previous
-                        // distances
-                        if (id[j] == id[v] && id[j] == id[w]) {
-                            // do not change distaqnce to j and use it to update distance to all the
-                            // previous nodes
+                        if (id[j] == id[v]) {
                             updateDistance(j, v);
-                        } else if (j == f) {
                             hasCircle = true;
-                            minDistance = -1;
-                            ancestor = -1;
-                            return;
-                        }
-                        // if DistTo[j] is larger, change v's id, otherwise change
-                        temp = DistTo[j] + DistTo[v] + 1;
-                        if (currentDistance == INFINITY || temp < currentDistance) {
-                            currentAncestor = j;
-                            currentDistance = temp;
+                            if (find(f, t) == t) {
+                                ancestor = f;
+                                minDistance = hops;
+                            } else if (find(t, f) == t) {
+                                minDistance = hops;
+                                ancestor = t;
+                            }
                         } else {
-                            break;
+                            // if DistTo[j] is larger, change v's id, otherwise change
+                            temp = DistTo[j] + DistTo[v] + 1;
+                            if (currentDistance == INFINITY || temp < currentDistance) {
+                                currentAncestor = j;
+                                currentDistance = temp;
+                            }
                         }
                     }
                 }
             }
             if (!toQueue.isEmpty()) {
-                w = toQueue.dequeue();
+                int w = toQueue.dequeue();
                 if (print)
                     System.out.printf("took %d from toQueue \n", w);
                 for (int k : digraphDFCopy.adj(w)) {
@@ -278,21 +276,23 @@ public class SAP {
                         edgeTo[k] = w;
                         toQueue.enqueue(k);
                     } else {
-                        if (id[k] == id[w] && id[k] == id[v]) {
+                        if (id[k] == id[w]) {
                             updateDistance(k, w);
-                        } else if (k == t) {
-                            minDistance = -1;
-                            ancestor = -1;
                             hasCircle = true;
-                            return;
-                        }
-                        temp = DistTo[k] + DistTo[w] + 1;
-                        if (currentDistance == INFINITY || temp < currentDistance) {
-                            currentAncestor = k;
-                            currentDistance = temp;
-
+                            if (find(f, t) == t) {
+                                ancestor = f;
+                                minDistance = hops;
+                            } else if (find(t, f) == t) {
+                                minDistance = hops;
+                                ancestor = t;
+                            }
                         } else {
-                            break;
+                            temp = DistTo[k] + DistTo[w] + 1;
+                            if (currentDistance == INFINITY || temp < currentDistance) {
+                                currentAncestor = k;
+                                currentDistance = temp;
+
+                            }
                         }
                     }
                 }
