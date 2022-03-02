@@ -36,6 +36,10 @@ public class SAP {
         edgeTo = new int[n];
         DistTo = new int[n];
         DistTo = new int[n];
+        for (int i = 0; i < n; i++) {
+            id[i] = i;
+            edgeTo[i] = i;
+        }
     }
 
     // length of the shortest ancestral path between v and w; -1 if no such path
@@ -68,10 +72,22 @@ public class SAP {
             } else if (find(w, v) == v && !hasCircle) {
                 minDistance = hops;
                 ancestor = w;
-            } else
+            } else {
+                for (int i = 0; i < n; i++) {
+                    id[i] = i;
+                    // edgeTo[i] = i;
+                }
                 lockStepBFS(v, w);
-        } else
+            }
+
+        } else {
+            for (int i = 0; i < n; i++) {
+                id[i] = i;
+                // edgeTo[i] = i;
+            }
             lockStepBFS(from, to);
+        }
+
         return minDistance;
     }
 
@@ -147,10 +163,20 @@ public class SAP {
             } else if (find(w, v) == v && !hasCircle) {
                 minDistance = hops;
                 ancestor = w;
-            } else
+            } else {
+                for (int i = 0; i < n; i++) {
+                    id[i] = i;
+                    // edgeTo[i] = i;
+                }
                 lockStepBFS(v, w);
-        } else
+            }
+        } else {
+            for (int i = 0; i < n; i++) {
+                id[i] = i;
+                // edgeTo[i] = i;
+            }
             lockStepBFS(from, to);
+        }
         return ancestor;
     }
 
@@ -209,6 +235,7 @@ public class SAP {
     private void updateDistance(int newNode, int previousNode) {
         while (DistTo[newNode] + 1 < DistTo[previousNode]) {
             DistTo[previousNode] = DistTo[newNode] + 1;
+            newNode = previousNode;
             previousNode = edgeTo[previousNode];
         }
     }
@@ -226,10 +253,6 @@ public class SAP {
         int currentDistance = INFINITY;
         int currentAncestor = -1;
         int temp = 0;
-        for (int i = 0; i < n; i++) {
-            id[i] = i;
-            edgeTo[i] = i;
-        }
         while (!(fromQueue.isEmpty() && toQueue.isEmpty())) {
             if (!fromQueue.isEmpty()) {
                 int v = fromQueue.dequeue();
@@ -246,13 +269,14 @@ public class SAP {
                         if (id[j] == id[v]) {
                             updateDistance(j, v);
                             hasCircle = true;
-                            if (find(f, t) == t) {
+                            if (find(j, f) == f) {
                                 ancestor = f;
                                 minDistance = hops;
-                            } else if (find(t, f) == t) {
+                            } else if (find(f, j) == f) {
                                 minDistance = hops;
-                                ancestor = t;
+                                ancestor = f;
                             }
+                            edgeTo[j] = v;
                         } else {
                             // if DistTo[j] is larger, change v's id, otherwise change
                             temp = DistTo[j] + DistTo[v] + 1;
@@ -279,19 +303,19 @@ public class SAP {
                         if (id[k] == id[w]) {
                             updateDistance(k, w);
                             hasCircle = true;
-                            if (find(f, t) == t) {
-                                ancestor = f;
+                            if (find(k, t) == t) {
+                                ancestor = k;
                                 minDistance = hops;
-                            } else if (find(t, f) == t) {
+                            } else if (find(t, k) == t) {
                                 minDistance = hops;
                                 ancestor = t;
                             }
+                            edgeTo[k] = w;
                         } else {
                             temp = DistTo[k] + DistTo[w] + 1;
                             if (currentDistance == INFINITY || temp < currentDistance) {
                                 currentAncestor = k;
                                 currentDistance = temp;
-
                             }
                         }
                     }
